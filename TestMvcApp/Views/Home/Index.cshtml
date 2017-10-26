@@ -1,0 +1,61 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" />
+</head>
+<body>
+    <div class="container">
+        <form>
+            <div class="form-group">
+                <label class="col-form-label">Url</label>
+                <input type="text" name="url" value="http://localhost:8545" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label class="col-form-label">Eth-address</label>
+                <input type="text" name="eth" value="0x0066ac7a4608f350bf9a0323d60dde211dfb27c0" class="form-control" />
+            </div>
+        </form>
+        <button type="button" class="btn btn-primary" name="getbynet">Баланс (.net)</button>
+        <button type="button" class="btn btn-primary" name="getbyweb3">Баланс (web3)</button>
+        <p id="result">
+        </p>
+    </div>
+
+
+    <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="~/Scripts/web3.min.js"></script>
+    <script>        
+        $('[name=getbynet]').on('click', function () {
+            var url = $('[name=url]').val(),
+                eth = $('[name=eth]').val();
+
+            $('#result').text('запрос...')
+            $.getJSON('/Home/GetBalance?url=' + url + '&eth=' + eth, function (result) {
+                console.info(result)
+                $('#result').text(result.balance + ' ETH');
+            }).fail(function () {
+                $('#result').text('Ошибка запроса');
+            });
+        });
+
+        $('[name=getbyweb3]').on('click', function () {
+            var url = $('[name=url]').val(),
+                eth = $('[name=eth]').val();
+            $('#result').text('запрос...')
+            
+            var web3 = new Web3(new Web3.providers.HttpProvider(url));
+            var balance = web3.fromWei(web3.eth.getBalance(eth), 'ether');
+
+            $('#result').text(balance + ' ETH');
+        });
+        
+    </script>
+</body>
+</html>
